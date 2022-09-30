@@ -8,7 +8,7 @@ write_files:
         ipv4.address: 192.168.1.50/24
         ipv6.address: none
       description: ""
-      name: lxdbr0
+      name: br0
       type: ""
       project: default
     storage_pools:
@@ -22,7 +22,7 @@ write_files:
       devices:
         eth0:
           name: eth0
-          network: lxdbr0
+          network: br0
           type: nic
         root:
           path: /
@@ -75,7 +75,7 @@ runcmd:
 - maas admin vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK
 - maas admin maas set-config name=upstream_dns value=1.1.1.1
 # Add LXD as a VM host for MAAS
-- maas admin vm-hosts create  password=password  type=lxd power_address=https://${IP_ADDRESS}:8443 project=maas
+- maas admin vm-hosts create  password=Musicplanet95  type=lxd power_address=https://${IP_ADDRESS}:8443 project=maas
 # Automatically create and add ssh keys to MAAS
 - ssh-keygen -q -t rsa -N "" -f "/home/ubuntu/.ssh/id_rsa"
 - chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa /home/ubuntu/.ssh/id_rsa.pub
