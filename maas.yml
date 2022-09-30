@@ -2,10 +2,10 @@ write_files:
 - content: |
     config:
       core.https_address: '[::]:8443'
-      core.trust_password: password
+      core.trust_password: Musicplanet95
     networks:
     - config:
-        ipv4.address: 10.10.10.1/24
+        ipv4.address: 192.168.1.50/24
         ipv6.address: none
       description: ""
       name: lxdbr0
@@ -13,7 +13,7 @@ write_files:
       project: default
     storage_pools:
     - config:
-        size: 24GB
+        size: 500GB
       description: ""
       name: default
       driver: zfs
@@ -62,19 +62,19 @@ runcmd:
 - maas init region+rack --database-uri maas-test-db:/// --maas-url http://${IP_ADDRESS}:5240/MAAS
 - sleep 15
 # Create MAAS admin and grab API key
-- maas createadmin --username admin --password admin --email admin
+- maas createadmin --username gabrifolli --password Musicplanet95 --email gabriele@veclab.it
 - export APIKEY=$(maas apikey --username admin)
 # MAAS admin login
 - maas login admin 'http://localhost:5240/MAAS/' $APIKEY
 # Configure MAAS networking (set gateways, vlans, DHCP on etc)
-- export SUBNET=10.10.10.0/24
+- export SUBNET=192.168.1.0/24
 - export FABRIC_ID=$(maas admin subnet read "$SUBNET" | jq -r ".vlan.fabric_id")
 - export VLAN_TAG=$(maas admin subnet read "$SUBNET" | jq -r ".vlan.vid")
 - export PRIMARY_RACK=$(maas admin rack-controllers read | jq -r ".[] | .system_id")
-- maas admin subnet update $SUBNET gateway_ip=10.10.10.1
-- maas admin ipranges create type=dynamic start_ip=10.10.10.200 end_ip=10.10.10.254
+- maas admin subnet update $SUBNET gateway_ip=192.168.1.1
+- maas admin ipranges create type=dynamic start_ip=192.168.1.150 end_ip=192.168.1.254
 - maas admin vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK
-- maas admin maas set-config name=upstream_dns value=8.8.8.8
+- maas admin maas set-config name=upstream_dns value=1.1.1.1
 # Add LXD as a VM host for MAAS
 - maas admin vm-hosts create  password=password  type=lxd power_address=https://${IP_ADDRESS}:8443 project=maas
 # Automatically create and add ssh keys to MAAS
